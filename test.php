@@ -1,6 +1,7 @@
 <?php 
 
 require_once('./src/php/Factory.php');
+require_once('./src/php/Dashboards.php');
 require_once('./src/php/Inventory.php');
 require_once('./src/php/Stock.php');
 
@@ -16,10 +17,14 @@ $authorization = json_decode(Factory::GetResponse("Auth/AuthorizeByApplication",
 $apiToken = $authorization->Token;
 $apiServer = "https://api.linnworks.net/";
 
+
+$Dashboards = new DashboardsMethods();
 $Inventory = new InventoryMethods();
 $Stock = new StockMethods();
 
-$stockitems = $Stock->GetStockItemsFull('',false,false,100,1,$a = array(0, 0),$b = array(0, 0),$apiToken, $apiServer);
+$lowStock = $Dashboards->GetLowStockLevel('',10,$apiToken, $apiServer);
+
+$stockitems = $Stock->GetStockItemsFull('',true,true,100,1,$a = array(0, 0),$b = array(0, 0),$apiToken, $apiServer);
 
 $getCategories = $Inventory->GetCategories($apiToken, $apiServer);
 
@@ -36,6 +41,21 @@ echo "authorization: "; echo print_r($authorization); echo "<br/>";
 
 echo "getCategories: "; echo "<pre>"; print_r($getCategories); echo "</pre>";
 
-echo "StockItemsFull: "; echo "<pre>"; print_r($stockitems); echo "</pre>";
+echo "StockItemsFull: "; echo "<pre>"; print_r($lowStock); echo "</pre>";
 
 ?>
+
+<!-- 
+
+get low stock items
+sort items into suupliers
+generate suuplier po's
+add items
+generate pdfs
+email suupliers
+colse any po stuff
+
+gui
+errr report emails sent
+
+ -->
