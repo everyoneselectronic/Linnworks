@@ -1,10 +1,23 @@
 <!-- 
 
 TODO
-
+****
 make loop for low stock items
 get all vars for item (supplier etc)
 
+FLOW
+****
+get low stock items
+sort items into suppliers
+generate supplier po's
+add items
+generate pdfs
+email suppliers
+close any po stuff
+
+NEEDED
+gui
+error report emails sent
  -->
 
 <?php 
@@ -43,6 +56,28 @@ $itemID = $item[0]->StockItemId;
 
 // $sup = $Inventory->GetSuppliers($apiToken, $apiServer);
 // $loc = $Inventory->GetStockLocations($apiToken, $apiServer);
+?>
+
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>PO MAKER</title>
+  <meta name="description" content="Make a PO">
+  <meta name="author" content="Liam Fogerty">
+
+  <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+  <![endif]-->
+
+</head>
+
+<body>
+
+<?php
+
 
 // print some info to see what's going on
 echo "<h1>Test</h1>";
@@ -57,13 +92,20 @@ echo "lowStock: "; echo "<pre>"; print_r($lowStock); echo "</pre>";
 echo "item: "; echo "<pre>"; print_r($item); echo "</pre>";
 
 // makePO();
+?>
+
+<button id="btnfun1" name="btnfun1" onClick='location.href="?makepo=1"'>Make PO</button>
+
+
+<?php
+if($_GET['makepo']){makePO();}
 
 // test function to make PO, add item and update PO to OPEN
 function makePO()
 {
     global $auth, $PurchaseOrder, $itemID, $apiToken, $apiServer;
 
-    echo "<h1>MAKEPO</h1>";
+    echo "<h1>MAKING PO</h1>";
 
     // get current time for PO DateOfPurchase
     $currentTime = $auth->GetServerUTCTime();
@@ -115,22 +157,11 @@ function makePO()
     $poOpen = $PurchaseOrder->Change_PurchaseOrderStatus($changeStatusParameter,$apiToken, $apiServer);
     echo "statusPO: "; echo "<pre>"; print_r($poOpen); echo "</pre>";
 
+    echo "<h1>PO MADE</h1>";
+
 }
 
 ?>
 
-<!-- 
-
-get low stock items
-sort items into suppliers
-generate supplier po's
-add items
-generate pdfs
-email suppliers
-close any po stuff
-
-NEEDED
-gui
-error report emails sent
-
- -->
+</body>
+</html>
